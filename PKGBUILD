@@ -1,0 +1,29 @@
+# Maintainer: Jon Sanchez <jon@jon-s.com>
+pkgname=deadbeef-plugin-soxresampler-git
+pkgver=r15.g103341b
+pkgrel=1
+_name=deadbeef_soxr
+epoch=
+pkgdesc="SoX Resampler plugin for DeaDBeeF music player"
+arch=("x86_64")
+url="https://github.com/silentlexx/deadbeef_soxr"
+license=('GPL2')
+depends=("deadbeef" "libsoxr")
+makedepends=("git")
+source=("git+https://github.com/silentlexx/deadbeef_soxr.git")
+sha384sums=("SKIP")
+
+build() {
+	cd "$srcdir/$_name"
+	make
+}
+
+package() {
+	cd "$srcdir/$_name"
+	install -Dm755 ddb_soxr_dsp.so "$pkgdir/usr/lib/deadbeef/ddb_soxr_dsp.so"
+}
+
+pkgver() {
+	cd "$srcdir/$_name"
+	echo r$(git rev-list --count HEAD).g$(git rev-parse --short HEAD)
+}
