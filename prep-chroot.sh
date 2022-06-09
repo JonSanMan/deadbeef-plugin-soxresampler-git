@@ -64,11 +64,10 @@ clean() {
 }
 
 usage() {
-	echo "Usage: $0 create|clean|help"
+	echo "Usage: $0 create|clean"
 	echo ""
 	echo "create: creates a build chroot"
 	echo "clean: cleans the system mounts for a build chroot"
-	echo "help: shows this message"
 }
 
 checkroot
@@ -79,9 +78,6 @@ create)
 	;;
 clean)
 	clean
-	;;
-help)
-	usage
 	;;
 *)
 	usage
