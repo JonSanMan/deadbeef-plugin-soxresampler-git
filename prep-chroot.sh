@@ -29,6 +29,7 @@ echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 echo "en_CA.UTF-8 UTF-8" >> /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
+echo "nameserver 127.0.0.53" > /etc/resolv.conf
 EOF
 	chmod +x "$TMPDIR/insidechroot.sh"
 }
@@ -48,7 +49,7 @@ create() {
 	sudo chroot "$TMPDIR" "/insidechroot.sh"
 
 	echo "Build chroot prepared"
-	echo "Invoke 'pacman -r $TMPDIR --cache-dir $TMPDIR/var/cache/pacman/pkg'"
+	echo "Invoke 'pacman -r $TMPDIR --cachedir $TMPDIR/var/cache/pacman/pkg'"
 	echo "  to install additional dependancies into the chroot"
 	echo ""
 	echo "Invoke 'sudo -u builduser makepkg' while chrooted to run makepkg"
