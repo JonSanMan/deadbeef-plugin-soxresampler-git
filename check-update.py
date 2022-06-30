@@ -23,6 +23,17 @@ class Packages:
 	def __init__(self):
 		self.pkgarray = []
 
+	def __iter__(self):
+		self.index = 0
+		return(self)
+
+	def __next__(self):
+		if (self.index == len(self.pkgarray)):
+			raise StopIteration
+		n = self.pkgarray[self.index]
+		self.index += 1
+		return(n)
+
 	def pkgs(self):
 		namearray = []
 		for i in self.pkgarray:
@@ -99,11 +110,11 @@ def getaurdata(pkgs):
 
 def debug(pkgdb):
 	DEBUGSTR = "DEBUG: {} Current: {}, AUR: {}"
-	for i in pkgdb.pkgarray:
+	for i in pkgdb:
 		print(DEBUGSTR.format(i.name, i.version, i.aurver))
 
 def addaurver(Packages, name, version):
-	for pkg in Packages.pkgarray:
+	for pkg in Packages:
 		if (pkg.name == name):
 			pkg.aurversion(version)
 
@@ -118,7 +129,7 @@ def checknewer(Packages):
 	AURNEWER = "AUR Version for {} is {}, current version is {}"
 	NONEW = "No newer versions in AUR"
 	newercount = 0
-	for pkg in Packages.pkgarray:
+	for pkg in Packages:
 		if isnewer(pkg.aurver, pkg.version):
 			print(AURNEWER.format(pkg.name, pkg.aurver, pkg.version))
 			newercount += 1
