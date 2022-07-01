@@ -3,7 +3,6 @@ pkgname=deadbeef-plugin-soxresampler-git
 pkgver=r15.g103341b
 pkgrel=1
 _name=deadbeef_soxr
-epoch=
 pkgdesc="SoX Resampler plugin for DeaDBeeF music player"
 arch=("x86_64")
 url="https://github.com/silentlexx/deadbeef_soxr"
