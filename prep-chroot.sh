@@ -12,41 +12,35 @@ TMPDIR=/tmp/chroot
 
 
 checkroot() {
-	if [[ $EUID == 0 ]]; then {
-		echo "This script should not be ran as root"
-		return -1
+	if [[ $EUID != 0 ]]; then {
+		echo "This script should be ran as root"
+		exit -1
 	}
 	fi
 }
 
 prepchroot() {
-	# Some commands need to be ran as root inside the chroot
-	cat > "$TMPDIR/insidechroot.sh" <<EOF
-#!/bin/bash
-echo "builduser:x:1000:1000:builduser:/build:/bin/bash" >> /etc/passwd
-echo "builduser:x:1000:" >> /etc/group
-echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-echo "en_CA.UTF-8 UTF-8" >> /etc/locale.gen
-locale-gen
-echo "LANG=en_US.UTF-8" > /etc/locale.conf
-echo "nameserver 127.0.0.53" > /etc/resolv.conf
-EOF
-	chmod +x "$TMPDIR/insidechroot.sh"
+	echo "builduser:x:1000:1000:builduser:/build:/bin/bash" >> "$TMPDIR/etc/passwd"
+	echo "builduser:x:1000:" >> "$TMPDIR/etc/group"
+	cp /etc/locale.gen "$TMPDIR/etc/locale.gen"
+	cp /etc/locale.conf "$TMPDIR/etc/locale.conf"
+	cp /etc/resolv.conf "$TMPDIR/etc/resolv.conf"
+	locale-gen
 }
 
 create() {
 	mkdir -p "$TMPDIR/var/lib/pacman"
-	sudo pacman -r "$TMPDIR" -Sy base-devel
-	sudo mount proc "$TMPDIR/proc" -t proc -o nosuid,noexec,nodev
-	sudo mount sys "$TMPDIR/sys" -t sysfs -o nosuid,noexec,nodev,ro
-	sudo mount udev "$TMPDIR/dev" -t devtmpfs -o mode=0755,nosuid
-	sudo mount devpts "$TMPDIR/dev/pts" -t devpts -o mode=0620,gid=5,nosuid,noexec
+	pacman -r "$TMPDIR" -Sy base-devel
+	mount proc "$TMPDIR/proc" -t proc -o nosuid,noexec,nodev
+	mount sys "$TMPDIR/sys" -t sysfs -o nosuid,noexec,nodev,ro
+	mount udev "$TMPDIR/dev" -t devtmpfs -o mode=0755,nosuid
+	mount devpts "$TMPDIR/dev/pts" -t devpts -o mode=0620,gid=5,nosuid,noexec
 
 	mkdir "$TMPDIR/build"
+	chown 1000:1000 "$TMPDIR/build"
 	cp ~/.makepkg.conf "$TMPDIR/build/.makepkg.conf"
 
 	prepchroot
-	sudo chroot "$TMPDIR" "/insidechroot.sh"
 
 	echo "Build chroot prepared"
 	echo "Invoke 'pacman -r $TMPDIR --cachedir $TMPDIR/var/cache/pacman/pkg'"
@@ -58,10 +52,10 @@ create() {
 }
 
 clean() {
-	sudo umount "$TMPDIR/dev/pts"
-	sudo umount "$TMPDIR/dev"
-	sudo umount "$TMPDIR/sys"
-	sudo umount "$TMPDIR/proc"
+	umount "$TMPDIR/dev/pts"
+	umount "$TMPDIR/dev"
+	umount "$TMPDIR/sys"
+	umount "$TMPDIR/proc"
 }
 
 usage() {
@@ -71,13 +65,13 @@ usage() {
 	echo "clean: cleans the system mounts for a build chroot"
 }
 
-checkroot
-
 case $1 in
 create)
+	checkroot
 	create
 	;;
 clean)
+	checkroot
 	clean
 	;;
 *)
