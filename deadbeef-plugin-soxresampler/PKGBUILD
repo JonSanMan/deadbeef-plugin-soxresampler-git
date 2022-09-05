@@ -1,5 +1,5 @@
 # Maintainer: Jon Sanchez <jon@jon-s.com>
-pkgname=deadbeef-plugin-soxresampler-git
+pkgname=deadbeef-plugin-soxresampler
 pkgver=r15.g103341b
 pkgrel=1
 _name=deadbeef_soxr
