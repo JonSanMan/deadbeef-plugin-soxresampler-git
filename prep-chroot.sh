@@ -25,7 +25,7 @@ prepchroot() {
 	cp /etc/locale.gen "$TMPDIR/etc/locale.gen"
 	cp /etc/locale.conf "$TMPDIR/etc/locale.conf"
 	cp /etc/resolv.conf "$TMPDIR/etc/resolv.conf"
-	locale-gen
+	chroot "$TMPDIR" locale-gen
 }
 
 create() {
