@@ -20,8 +20,8 @@ checkroot() {
 }
 
 prepchroot() {
-	echo "builduser:x:1000:1000:builduser:/build:/bin/bash" >> "$TMPDIR/etc/passwd"
-	echo "builduser:x:1000:" >> "$TMPDIR/etc/group"
+	echo "builduser:x:$SUDO_UID:$SUDO_GID:builduser:/build:/bin/bash" >> "$TMPDIR/etc/passwd"
+	echo "builduser:x:$SUDO_GID:" >> "$TMPDIR/etc/group"
 	cp /etc/locale.gen "$TMPDIR/etc/locale.gen"
 	cp /etc/locale.conf "$TMPDIR/etc/locale.conf"
 	cp /etc/resolv.conf "$TMPDIR/etc/resolv.conf"
@@ -37,8 +37,8 @@ create() {
 	mount devpts "$TMPDIR/dev/pts" -t devpts -o mode=0620,gid=5,nosuid,noexec
 
 	mkdir "$TMPDIR/build"
-	chown 1000:1000 "$TMPDIR/build"
-	cp ~/.makepkg.conf "$TMPDIR/build/.makepkg.conf"
+	chown "$SUDO_UID:$SUDO_GID" "$TMPDIR/build"
+	cp "/home/$SUDO_USER/.makepkg.conf" "$TMPDIR/build/.makepkg.conf"
 
 	prepchroot
 
